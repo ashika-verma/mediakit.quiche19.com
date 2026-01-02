@@ -1,21 +1,23 @@
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables
+import dotenv from 'dotenv';
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 async function fetchYouTubeData() {
   try {
-    // Parse the Google API secret from GitHub Secrets
-    const secretJson = process.env.GOOGLE_API_SECRET;
-    
-    if (!secretJson) {
-      throw new Error('GOOGLE_API_SECRET environment variable not set');
-    }
-
-    const secretData = JSON.parse(secretJson);
-    const API_KEY = secretData.api_key || secretData.installed?.client_id;
+    // Get the YouTube API key from environment
+    const API_KEY = process.env.YOUTUBE_API_KEY;
+    console.log('Using YouTube API Key:', API_KEY );
     
     if (!API_KEY) {
-      throw new Error('API key not found in secret');
+      throw new Error('YOUTUBE_API_KEY not found in .env or environment');
     }
 
     // Replace with your channel ID
@@ -45,7 +47,7 @@ async function fetchYouTubeData() {
     console.log(JSON.stringify(goldData, null, 2));
 
     // Store the data in a JSON file for tracking
-    const dataDir = path.join(process.cwd(), 'src', 'data');
+    const dataDir = path.join(__dirname, '../../src', 'data');
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
@@ -68,6 +70,10 @@ async function fetchYouTubeData() {
 
   } catch (error) {
     console.error('❌ Error fetching YouTube data:', error.message);
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Data:', JSON.stringify(error.response.data, null, 2));
+    }
     process.exit(1);
   }
 }

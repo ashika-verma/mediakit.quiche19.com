@@ -18,11 +18,11 @@ jobs:
           node-version: '18'
       
       - name: Install dependencies
-        run: npm install axios
+        run: npm install axios dotenv
       
       - name: Fetch YouTube Data
         env:
-          GOOGLE_API_SECRET: ${{ secrets.GOOGLE_API_SECRET }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: node .github/scripts/fetch-youtube-data.js
       
       - name: Commit and push data
