@@ -14,21 +14,20 @@ async function fetchYouTubeData() {
   try {
     // Get the YouTube API key from environment
     const API_KEY = process.env.YOUTUBE_API_KEY;
-    console.log('Using YouTube API Key:', API_KEY );
-    
+
     if (!API_KEY) {
       throw new Error('YOUTUBE_API_KEY not found in .env or environment');
     }
 
     // Replace with your channel ID
     const CHANNEL_ID = 'UCJ_Vbgoe1Px6s-jL9Sn57yA';
-    
+
     // YouTube Data API v3 endpoint
     const url = `https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&id=${CHANNEL_ID}&key=${API_KEY}`;
-    
+
     console.log('Fetching YouTube channel data...');
     const response = await axios.get(url);
-    
+
     if (!response.data.items || response.data.items.length === 0) {
       throw new Error('No channel data found');
     }
@@ -54,7 +53,7 @@ async function fetchYouTubeData() {
 
     const dataFile = path.join(dataDir, 'youtube-metrics.json');
     let existingData = [];
-    
+
     if (fs.existsSync(dataFile)) {
       existingData = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
     }
